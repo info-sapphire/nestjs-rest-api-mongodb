@@ -19,12 +19,13 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-prodcut.dto';
 
 import { ProductsService } from './products.service';
+import { Product } from './schemas/product.schema';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
   @Get()
-  getAll(): any[] {
+  getAll(): Promise<Product[]> {
     return this.productsService.getAll();
   }
 
@@ -41,7 +42,7 @@ export class ProductsController {
 
   @Get(':id')
   @Header('Cache-Control', 'none')
-  getOne(@Param('id') id: string): string {
+  getOne(@Param('id') id: string): Promise<Product> {
     return this.productsService.getById(id);
   }
 
@@ -53,7 +54,7 @@ export class ProductsController {
 
   @Put(':id')
   update(@Body() updateProduct: UpdateProductDto, @Param('id') id: string) {
-    return this.productsService.update({ ...updateProduct, id });
+    return this.productsService.update(id, updateProduct);
   }
 
   @Delete(':id')
